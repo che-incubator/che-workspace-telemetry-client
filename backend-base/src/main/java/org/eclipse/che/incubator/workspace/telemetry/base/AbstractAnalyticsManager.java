@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Red Hat, Inc.
+ * Copyright (c) 2016-2021 Red Hat, Inc.
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
@@ -14,7 +14,7 @@ package org.eclipse.che.incubator.workspace.telemetry.base;
 import static java.lang.Long.parseLong;
 import static org.eclipse.che.incubator.workspace.telemetry.base.AnalyticsEvent.WORKSPACE_OPENED;
 import static org.eclipse.che.incubator.workspace.telemetry.base.AnalyticsEvent.WORKSPACE_STARTED;
-import static org.eclipse.che.multiuser.machine.authentication.shared.Constants.USER_ID_CLAIM;
+import static org.eclipse.che.multiuser.machine.authentication.shared.Constants.USER_NAME_CLAIM;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.IOException;
@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
@@ -41,6 +43,7 @@ import org.eclipse.che.api.core.rest.HttpJsonRequestFactory;
 import org.eclipse.che.api.factory.shared.dto.FactoryDto;
 import org.eclipse.che.api.workspace.shared.Constants;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDto;
+import org.eclipse.che.incubator.workspace.telemetry.anonymizer.SHA1HashGenerator;
 import org.slf4j.Logger;
 
 import io.jsonwebtoken.JwtParser;
@@ -122,6 +125,9 @@ public abstract class AbstractAnalyticsManager {
 
   private HttpJsonRequestFactory requestFactory;
 
+  @Inject
+  SHA1HashGenerator sha1HashGenerator;
+
   public abstract boolean isEnabled();
 
   public abstract void onActivity();
@@ -185,7 +191,7 @@ public abstract class AbstractAnalyticsManager {
     setFactoryVariables(endpoint, workspaceConfig);
 
     workspaceName = getWorkspaceName(workspaceConfig, devfile);
-    userId = getUserIdFromMachineToken(machineToken);
+    userId = generateUserId(machineToken);
     commonProperties = makeCommonProperties();
   }
 
@@ -210,7 +216,6 @@ public abstract class AbstractAnalyticsManager {
   }
 
   public final String getUserId() {
-
     return userId;
   }
 
@@ -339,28 +344,37 @@ public abstract class AbstractAnalyticsManager {
     }
   }
 
-  private String getUserIdFromMachineToken(String machineToken) {
-    String userId = this.userId;
+  private String generateUserId(final String machineToken) {
+      String generatedUserId = null;
+      String username = getUserNameFromMachineToken(machineToken);
+      if (username != null && !username.isEmpty()) {
+         generatedUserId = sha1HashGenerator.generateHash(username);
+      }
+      return generatedUserId;
+  }
+
+  private String getUserNameFromMachineToken(final String machineToken) {
+    String username = null;
     if (machineToken != null && !machineToken.isEmpty()) {
       try {
         JwtParser jwtParser = Jwts.parser();
         String[] splitted = machineToken.split("\\.");
         if (splitted.length != 3) {
-          LOG.warn("Cannot retrieve user Id from the machine token: invalid token");
+          LOG.warn("Cannot retrieve user name from the machine token: invalid token");
         } else {
-          Object userIdClaim = jwtParser.parseClaimsJwt(splitted[0] + "." + splitted[1] + ".").getBody()
-              .get(USER_ID_CLAIM);
-          if (userIdClaim == null) {
-            LOG.warn("Cannot retrieve user Id from the machine token: No '{}' claim", USER_ID_CLAIM);
+          Object userNameClaim = jwtParser.parseClaimsJwt(splitted[0] + "." + splitted[1] + ".").getBody()
+              .get(USER_NAME_CLAIM);
+          if (userNameClaim == null) {
+            LOG.warn("Cannot retrieve user Id from the machine token: No '{}' claim", USER_NAME_CLAIM);
           } else {
-            userId = userIdClaim.toString();
+            username = userNameClaim.toString();
           }
         }
       } catch (Exception e) {
         LOG.warn("Cannot retrieve user Id from the machine token", e);
       }
     }
-    return userId;
+    return username;
   }
 
   /**

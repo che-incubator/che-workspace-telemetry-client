@@ -1,7 +1,17 @@
+/*
+ * Copyright (c) 2021 Red Hat, Inc.
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   Red Hat, Inc. - initial API and implementation
+ */
 package org.eclipse.che.incubator.workspace.telemetry;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.RestAssured;
 import org.eclipse.che.incubator.workspace.telemetry.model.Event;
 import org.eclipse.che.incubator.workspace.telemetry.model.EventProperty;
 import org.junit.jupiter.api.Test;
@@ -10,7 +20,6 @@ import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 
 import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.is;
 
 @QuarkusTest
 public class TelemetryResourceIT {

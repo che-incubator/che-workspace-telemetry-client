@@ -14,7 +14,6 @@ package org.eclipse.che.incubator.workspace.telemetry.model;
 
 import java.util.Objects;
 
-import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.ArrayList;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Red Hat, Inc.
+ * Copyright (c) 2016-2021 Red Hat, Inc.
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
@@ -40,7 +40,7 @@ public class DefaultAnalyticsManager extends AbstractAnalyticsManager {
 
   @Override
   public void onEvent(AnalyticsEvent event, String ownerId, String ip,
-      String userAgent, String resolution, Map<String, Object> properties) {
+    String userAgent, String resolution, Map<String, Object> properties) {
     LOG.info("Event triggered by user {} in {} from ip {} on agent {} :\n{}\nwith resolution: {}\nwith properties:\n{}", getUserId(), ownerId, ip, userAgent, event, resolution, properties);
   }
 
