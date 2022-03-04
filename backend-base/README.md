@@ -6,13 +6,17 @@ This library is meant to be extended later by other libraries.  It implements a 
 * JDK 11+
 * Apache Maven 3.8.1+
 
+## Devworkspace telemetry support
+Since version backend-base version 0.0.34, Che server workspace telemetry support has been replaced in favour of Devworkspace telemetry.
+Version 0.0.32 is the latest version supporting Che server workspace telemetry.
+
 ## Building
 
 Be sure to set `devworkspace.id` in `src/main/resources/application.properties` or set it on the command line during the maven run:
 
 ```shell script
 mvn package -Ddevworkspace.id=foo
-```
+```orkspace telemetr
 
 For a native Quarkus image, run:
 
