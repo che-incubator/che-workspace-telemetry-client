@@ -6,6 +6,9 @@ This repository contains an abstract telemetry API and a Typescript implementati
 
 ## Releasing
 
+
+
+
 Whenever a commit is pushed to `master`, the GitHub Action defined in [`publish.yaml`](./.github/workflows/publish.yaml) is run.  This installs `maven`, increments the versions in each POM, builds the projects, creates a release commit, and runs `mvn deploy`.  This job pushes a number of artifacts to the [GitHub package repository](https://github.com/che-incubator/che-workspace-telemetry-client/packages) for this repository.
 
 | Project        | Artifact Name       |  Description | Used By |
