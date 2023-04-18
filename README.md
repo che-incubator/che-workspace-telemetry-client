@@ -31,3 +31,6 @@ To use the new version in the woopra plugin, replace the version coordinate in `
 
 ## For information about the abstract Java API, see [this README](./backend-base/README.md)
 
+## Trademark
+
+"Che" is a trademark of the Eclipse Foundation
